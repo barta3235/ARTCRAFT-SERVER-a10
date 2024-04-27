@@ -1,5 +1,5 @@
 const express = require('express')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors= require('cors')
 const app = express()
 require('dotenv').config()
@@ -32,11 +32,26 @@ async function run() {
 
     const artItemCollection= client.db('artCraftDb').collection('artItem');
 
+
+    app.get('/items', async(req,res)=>{
+        const cursor= artItemCollection.find();
+        const result =await cursor.toArray()
+        res.send(result);
+    })
+
+    app.get('/items/:id',async(req,res)=>{
+        const id= req.params.id;
+        const query={ _id: new ObjectId(id)};
+        const result= await artItemCollection.findOne(query);
+        res.send(result);
+    })
+
     app.post('/items', async(req,res)=>{
         const newItem= req.body;
         const result= await artItemCollection.insertOne(newItem)
         res.send(result);
     })
+
 
 
 
