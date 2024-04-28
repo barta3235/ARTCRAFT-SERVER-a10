@@ -31,6 +31,13 @@ async function run() {
     await client.connect();
 
     const artItemCollection = client.db('artCraftDb').collection('artItem');
+    const subCatItem=client.db('artCraftDb').collection('subCatItem');
+
+    app.get('/subcatitem',async(req,res)=>{
+      const cursor= subCatItem.find()
+      const result=await cursor.toArray();
+      res.send(result);
+    })
 
 
     app.get('/items', async (req, res) => {
@@ -79,7 +86,7 @@ async function run() {
       const options = { upsert: true };
       const updatedData = {
         $set: {
-          imageurl: newData.name,
+          imageurl: newData.imageurl,
           itemname: newData.itemname,
           subcategory:newData.subcategory,
           description: newData. description,
