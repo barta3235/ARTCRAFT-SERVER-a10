@@ -1,6 +1,6 @@
 const express = require('express')
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const cors= require('cors')
+const cors = require('cors')
 const app = express()
 require('dotenv').config()
 const port = process.env.PORT || 5000
@@ -30,45 +30,69 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
 
-    const artItemCollection= client.db('artCraftDb').collection('artItem');
+    const artItemCollection = client.db('artCraftDb').collection('artItem');
 
 
-    app.get('/items', async(req,res)=>{
-        const cursor= artItemCollection.find();
-        const result =await cursor.toArray()
-        res.send(result);
-    })
-
-    app.get('/itemsbyemail', async(req,res)=>{
-      const cursor= artItemCollection.find();
-      const result =await cursor.toArray()
+    app.get('/items', async (req, res) => {
+      const cursor = artItemCollection.find();
+      const result = await cursor.toArray()
       res.send(result);
-  })
-
-    app.get('/items/:id',async(req,res)=>{
-        const id= req.params.id;
-        const query={ _id: new ObjectId(id)};
-        const result= await artItemCollection.findOne(query);
-        res.send(result);
     })
 
-    app.get('/itemsbyemail/:email',async(req,res)=>{
-        const email= req.params.email;
-        const filter= {email:email};
-        const result= await artItemCollection.find(filter).toArray();
-        res.send(result);
+    app.get('/itemsbyemail', async (req, res) => {
+      const cursor = artItemCollection.find();
+      const result = await cursor.toArray()
+      res.send(result);
     })
 
-    app.post('/items', async(req,res)=>{
-        const newItem= req.body;
-        const result= await artItemCollection.insertOne(newItem)
-        res.send(result);
+    app.get('/items/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await artItemCollection.findOne(query);
+      res.send(result);
     })
 
-    app.delete('/items/:id', async(req,res)=>{
-      const id= req.params.id;
-      const query= {_id: new ObjectId(id)};
-      const result= await coffeeCollection.deleteOne(query);
+    app.get('/itemsbyemail/:email', async (req, res) => {
+      const email = req.params.email;
+      const filter = { email: email };
+      const result = await artItemCollection.find(filter).toArray();
+      res.send(result);
+    })
+
+    app.post('/items', async (req, res) => {
+      const newItem = req.body;
+      const result = await artItemCollection.insertOne(newItem)
+      res.send(result);
+    })
+
+    app.delete('/items/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await artItemCollection.deleteOne(query);
+      res.send(result);
+    })
+
+    app.put(`/items/:id`, async (req, res) => {
+      const id = req.params.id;
+      const newData = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const options = { upsert: true };
+      const updatedData = {
+        $set: {
+          imageurl: newData.name,
+          itemname: newData.itemname,
+          subcategory:newData.subcategory,
+          description: newData. description,
+          price: newData.price,
+          rating:newData.rating,
+          processingtime:newData.processingtime,
+          stockstatus:newData.stockstatus,
+          name:newData.name,
+          email:newData.email,
+          customization:newData.customization
+        }
+      }
+      const result =await artItemCollection.updateOne(filter,updatedData,options)
       res.send(result);
     })
 
@@ -91,10 +115,10 @@ run().catch(console.dir);
 
 
 
-app.get('/',(req,res)=>{
-    res.send('Server is working');
+app.get('/', (req, res) => {
+  res.send('Server is working');
 })
 
-app.listen(port,()=>{
-    console.log('Server is working')
+app.listen(port, () => {
+  console.log('Server is working')
 })
