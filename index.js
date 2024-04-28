@@ -39,6 +39,13 @@ async function run() {
       res.send(result);
     })
 
+    app.get('/subcatitem/:cat',async(req,res)=>{
+      const categoryName= req.params.cat;
+      const filter= {subcategory:categoryName};
+      const result= await artItemCollection.find(filter).toArray();
+      res.send(result);
+    })
+
 
     app.get('/items', async (req, res) => {
       const cursor = artItemCollection.find();
